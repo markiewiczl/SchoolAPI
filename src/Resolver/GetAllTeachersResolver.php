@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Resolver;
 
+use App\Model\TeacherAndGroupModel;
 use App\Repository\TeacherRepositoryInterface;
 
 final class GetAllTeachersResolver implements GetAllTeachersResolverInterface
@@ -19,14 +20,12 @@ final class GetAllTeachersResolver implements GetAllTeachersResolverInterface
     {
         $teachers = $this->teacherRepository->findAll();
 
-        foreach ($teachers as $key => $teacher) {
-            $group = $teacher->getGroupClass();
-            $groupName = $group->getName();
-            $array[$key] = [
-                'name' => $teacher->getFullName(),
-                'groupName' => $groupName
-            ]
-            ;
+        foreach ($teachers as $teacher) {
+            $teacherName = $teacher->getFullName();
+            $groupName = $teacher->getGroupClass()->getName();
+            $teacherAndGroup = new TeacherAndGroupModel($teacherName, $groupName);
+
+            $array[] = $teacherAndGroup;
         }
 
         return $array;
